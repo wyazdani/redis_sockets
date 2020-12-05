@@ -46,3 +46,20 @@ Route::get('articles/{article}', function (\App\Models\Article $article) {
 
     return $article;
 });
+
+/*Redis Caching*/
+Route::get('caching-articles', function () {
+    if ($value = Redis::get('articles.all')){
+        return unserialize($value);
+    }
+    $articles   =   \App\Models\Article::all();
+
+    Redis::set('articles.all',serialize($articles));
+
+    return $articles;
+});
+Route::get('laravel-caching-articles', function () {
+    return Cache::remember('articles.all',30,function (){
+        return \App\Models\Article::all();
+    });
+});
