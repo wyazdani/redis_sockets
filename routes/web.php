@@ -19,6 +19,10 @@ Route::get('/', function () {
 
     return view('welcome')->withVisits($visits);
 });
+Route::get('/fire', function () {
+    event(new \App\Events\TestEvent());
+    return 'ok';
+});
 Route::get('articles/trending', function () {
 
     $trending   =   Redis::zrevrange('trending_articles',0,2);
@@ -58,6 +62,7 @@ Route::get('caching-articles', function () {
 
     return $articles;
 });
+/*Redis Caching Using Laravel Driver*/
 Route::get('laravel-caching-articles', function () {
     return Cache::remember('articles.all',30,function (){
         return \App\Models\Article::all();
